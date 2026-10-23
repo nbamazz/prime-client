@@ -1,66 +1,24 @@
-package com.example.addon.modules;
+public class PrimeAddon extends MeteorAddon {
+    public static final Category CATEGORY = new Category("Prime");
 
-import com.example.addon.AddonTemplate;
-import meteordevelopment.meteorclient.events.render.Render3DEvent;
-import meteordevelopment.meteorclient.renderer.ShapeMode;
-import meteordevelopment.meteorclient.settings.ColorSetting;
-import meteordevelopment.meteorclient.settings.DoubleSetting;
-import meteordevelopment.meteorclient.settings.Setting;
-import meteordevelopment.meteorclient.settings.SettingGroup;
-import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.utils.render.color.Color;
-import meteordevelopment.meteorclient.utils.render.color.SettingColor;
-import meteordevelopment.orbit.EventHandler;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.AABB;
-
-public class ModuleExample extends Module {
-    private final SettingGroup sgGeneral = this.settings.getDefaultGroup();
-    private final SettingGroup sgRender = this.settings.createGroup("Render");
-
-    /**
-     * Example setting.
-     * The {@code name} parameter should be in kebab-case.
-     * If you want to access the setting from another class, simply make the setting {@code public}, and use
-     * {@link meteordevelopment.meteorclient.systems.modules.Modules#get(Class)} to access the {@link Module} object.
-     */
-    private final Setting<Double> scale = sgGeneral.add(new DoubleSetting.Builder()
-        .name("scale")
-        .description("The size of the marker.")
-        .defaultValue(2.0d)
-        .range(0.5d, 10.0d)
-        .build()
-    );
-
-    private final Setting<SettingColor> color = sgRender.add(new ColorSetting.Builder()
-        .name("color")
-        .description("The color of the marker.")
-        .defaultValue(Color.MAGENTA)
-        .build()
-    );
-
-    /**
-     * The {@code name} parameter should be in kebab-case.
-     */
-    public ModuleExample() {
-        super(AddonTemplate.CATEGORY, "world-origin", "An example module that highlights the center of the world.");
+    @Override
+    public void onInitialize() {
+        Modules.get().add(new PrimeAutoTotem());
+        Modules.get().add(new PrimeAutoArmor());
+        Modules.get().add(new PrimeAutoTrap());
+        Modules.get().add(new PrimeAutoCrystal());
+        Modules.get().add(new PrimeAutoXP());
+        Modules.get().add(new PrimeCriticals());
+        Modules.get().add(new PrimeReplenish());
+        Modules.get().add(new AutoWeb());
+        // rest of your modules
     }
 
-    /**
-     * Example event handling method.
-     * Requires {@link AddonTemplate#getPackage()} to be setup correctly, otherwise the game will crash whenever the module is enabled.
-     */
-    @EventHandler
-    private void onRender3d(Render3DEvent event) {
-        // Create & expand the marker object
-        AABB marker = new AABB(BlockPos.ZERO);
-        marker = marker.expandTowards(
-            scale.get() * marker.getXsize(),
-            scale.get() * marker.getYsize(),
-            scale.get() * marker.getZsize()
-        );
-
-        // Render the marker based on the color setting
-        event.renderer.box(marker, color.get(), color.get(), ShapeMode.Both, 0);
+    @Override
+    public void onRegisterCategories() {
+        Modules.registerCategory(CATEGORY);
     }
+
+    @Override
+    public String getPackage() { return "com.nbamazz.prime"; }
 }
